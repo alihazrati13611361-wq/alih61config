@@ -1,0 +1,26 @@
+name: Auto Update Subs
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # هر ۶ ساعت یک‌بار به‌روزرسانی میشه
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Fetch configs
+        run: |
+          # لینک منابع رایگان و معتبر برای جمع‌آوری کانفیگ
+          curl -s "https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/mix" > sub.txt
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "bot@github.com"
+          git add sub.txt
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update configs" && git push)
+          
